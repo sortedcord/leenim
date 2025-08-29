@@ -31,5 +31,12 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+
+  "permissions": ["fs:read", "fs:write", "dialog:open"],
+  "scopes": {
+    "fs": {
+      "allow": ["$APPDATA/**"]
+    }
   }
 }
