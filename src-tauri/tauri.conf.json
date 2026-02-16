@@ -32,11 +32,14 @@
       "icons/icon.ico"
     ]
   },
-
-  "permissions": ["fs:read", "fs:write", "dialog:open"],
-  "scopes": {
+  "plugins": {
     "fs": {
-      "allow": ["$APPDATA/**"]
+      "scope": {
+        "allow": [
+          "$APPDATA/**",
+          "$HOME/.local/share/**"
+        ]
+      }
     }
   }
 }

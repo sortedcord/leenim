@@ -5,6 +5,7 @@
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafb);
 }
+
 :root {
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   font-size: 16px;
@@ -81,6 +82,7 @@ button {
 button:hover {
   border-color: #396cd8;
 }
+
 button:active {
   border-color: #396cd8;
   background-color: #e8e8e8;
@@ -110,7 +112,464 @@ button {
     color: #ffffff;
     background-color: #0f0f0f98;
   }
+
   button:active {
     background-color: #0f0f0f69;
   }
+}
+
+/* --- App shell layout (video-editor style) --- */
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+#root {
+  height: 100%;
+}
+
+.appRoot {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #0f1115;
+  color: #e6e6e6;
+}
+
+.appTopBar {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #121522;
+}
+
+.appTopActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.appBrand {
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.appHint {
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+.appMain {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Logs page */
+
+.logsRoot {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.logsBody {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 10px;
+}
+
+.logsEmpty {
+  opacity: 0.75;
+  font-size: 13px;
+  padding: 12px;
+}
+
+.logsEntry {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+
+.logsEntryHeader {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.logsKind {
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  opacity: 0.9;
+}
+
+.logsKind-install {
+  background: rgba(120, 255, 180, 0.08);
+}
+
+.logsKind-render {
+  background: rgba(120, 160, 255, 0.10);
+}
+
+.logsKind-error {
+  background: rgba(255, 120, 120, 0.12);
+  border-color: rgba(255, 120, 120, 0.25);
+}
+
+.logsKind-info {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.logsStatus {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.logsTime {
+  opacity: 0.65;
+  font-size: 12px;
+}
+
+.logsEntryMeta {
+  opacity: 0.72;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+/* --- Split panes --- */
+
+.split {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  min-height: 0;
+  min-width: 0;
+}
+
+.split-pane {
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.split-gutter {
+  background: rgba(255, 255, 255, 0.06);
+  transition: background 120ms ease;
+}
+
+.split-gutter:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.split-gutter-v {
+  cursor: col-resize;
+}
+
+.split-gutter-h {
+  cursor: row-resize;
+}
+
+/* --- Panels --- */
+
+.panelHeader {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0f1320;
+}
+
+.panelTitle {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.panelRight {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  opacity: 0.85;
+}
+
+.btn {
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #eaeaea;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: none;
+}
+
+.btn:hover {
+  border-color: rgba(120, 160, 255, 0.7);
+}
+
+/* Code panel */
+
+.codeRoot {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.codeEditor {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Preview panel */
+
+.previewRoot {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.previewCanvas {
+  flex: 1;
+  min-height: 0;
+  background: #0b0d12;
+  display: grid;
+  place-items: center;
+}
+
+.previewVideo {
+  width: min(920px, calc(100% - 24px));
+  max-height: calc(100% - 24px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  background: #000;
+}
+
+.previewPlaceholder {
+  width: min(720px, calc(100% - 24px));
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.03);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  text-align: center;
+}
+
+.previewPlaceholderTitle {
+  font-weight: 700;
+}
+
+.previewPlaceholderSub {
+  margin-top: 6px;
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.previewLogs {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0c0f16;
+  padding: 10px;
+  overflow: auto;
+  max-height: 220px;
+}
+
+.previewLogsHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.previewLogsTitle {
+  font-weight: 700;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.previewLogsMeta {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  opacity: 0.65;
+  overflow: hidden;
+}
+
+.previewMetaItem {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 38vw;
+}
+
+.previewLogsEmpty {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.previewLogBlock {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.previewLogBlockErr {
+  border-color: rgba(255, 120, 120, 0.25);
+  background: rgba(255, 120, 120, 0.06);
+}
+
+.previewLogLabel {
+  font-weight: 700;
+  font-size: 11px;
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+.previewLogPre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.35;
+  opacity: 0.95;
+}
+
+/* Timeline */
+
+.timelineRoot {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: #0d1018;
+}
+
+.timelineToolbar {
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0f1320;
+}
+
+.timelineTitle {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.timelineMeta {
+  display: flex;
+  gap: 8px;
+  opacity: 0.75;
+  font-size: 12px;
+}
+
+.timelineBody {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: 1fr 34px;
+}
+
+.timelineTracks {
+  overflow: auto;
+  padding: 10px;
+}
+
+.timelineTrack {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 10px;
+  align-items: start;
+  margin-bottom: 10px;
+}
+
+.timelineTrackLabel {
+  opacity: 0.8;
+  font-size: 12px;
+  padding-top: 6px;
+}
+
+.timelineTrackLane {
+  position: relative;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.timelineClip {
+  position: absolute;
+  top: 8px;
+  height: 28px;
+  border-radius: 8px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(120, 160, 255, 0.18);
+  font-size: 12px;
+  user-select: none;
+}
+
+.timelineClipMuted {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.timelineRuler {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 40px;
+  height: 34px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.timelineTick {
+  position: relative;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.timelineTickMajor {
+  border-right: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.timelineTickLabel {
+  position: absolute;
+  top: 7px;
+  left: 6px;
+  font-size: 11px;
+  opacity: 0.6;
 }
