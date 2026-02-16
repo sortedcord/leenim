@@ -7,6 +7,7 @@ export type PreviewPanelProps = {
     isInstalling?: boolean;
     outputUrl?: string | null;
     onVideoError?: (info: { src: string; code?: number; message?: string }) => void;
+    showInstallButton?: boolean;
 };
 
 export default function PreviewPanel({
@@ -16,6 +17,7 @@ export default function PreviewPanel({
     isInstalling,
     outputUrl,
     onVideoError,
+    showInstallButton = true,
 }: PreviewPanelProps) {
     return (
         <div className="previewRoot">
@@ -23,9 +25,11 @@ export default function PreviewPanel({
                 <div className="panelTitle">Preview</div>
                 <div className="panelRight">
                     <span className="badge">{status}</span>
-                    <button className="btn" onClick={onInstallManim} disabled={!onInstallManim || Boolean(isInstalling)}>
-                        {isInstalling ? "Installing..." : "Install Manim"}
-                    </button>
+                    {showInstallButton ? (
+                        <button className="btn" onClick={onInstallManim} disabled={!onInstallManim || Boolean(isInstalling)}>
+                            {isInstalling ? "Installing..." : "Install Manim"}
+                        </button>
+                    ) : null}
                     <button className="btn" onClick={onRender}>Render</button>
                 </div>
             </div>

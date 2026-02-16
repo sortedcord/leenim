@@ -26,6 +26,54 @@ struct InstallResult {
     work_dir: String,
 }
 
+#[derive(Serialize)]
+struct ManimStatusResult {
+    ok: bool,
+    installed: bool,
+    stdout: String,
+    stderr: String,
+    work_dir: String,
+}
+
+#[tauri::command]
+fn manim_status(app: tauri::AppHandle) -> Result<ManimStatusResult, String> {
+    use std::process::Command;
+
+    let work_dir = app_work_dir(&app)?;
+    let venv_dir = work_dir.join(".venv");
+    let venv_python = if cfg!(windows) {
+        venv_dir.join("Scripts").join("python.exe")
+    } else {
+        venv_dir.join("bin").join("python")
+    };
+
+    if !venv_python.exists() {
+        return Ok(ManimStatusResult {
+            ok: true,
+            installed: false,
+            stdout: String::new(),
+            stderr: String::new(),
+            work_dir: work_dir.to_string_lossy().to_string(),
+        });
+    }
+
+    // Check that manim is importable inside the venv.
+    let mut cmd = Command::new(&venv_python);
+    cmd.current_dir(&work_dir)
+        .arg("-c")
+        .arg("import manim; print(getattr(manim, '__version__', 'unknown'))");
+
+    let (ok, stdout, stderr) = run_capture(&mut cmd)?;
+
+    Ok(ManimStatusResult {
+        ok: true,
+        installed: ok,
+        stdout,
+        stderr,
+        work_dir: work_dir.to_string_lossy().to_string(),
+    })
+}
+
 fn app_work_dir(app: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
     let base_dir = app
         .path()
@@ -286,6 +334,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             greet,
+            manim_status,
             install_manim,
             render_manim,
             read_file_base64

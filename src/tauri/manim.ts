@@ -21,6 +21,14 @@ export type ReadFileBase64Result = {
     bytes: number;
 };
 
+export type ManimStatusResult = {
+    ok: boolean;
+    installed: boolean;
+    stdout: string;
+    stderr: string;
+    work_dir: string;
+};
+
 function isTauriRuntime() {
     // More robust than __TAURI__: different versions / dev setups may not expose it.
     // In Tauri v2, the IPC bridge is typically present as a `__TAURI_INTERNALS__` global.
@@ -69,4 +77,18 @@ export async function readFileBase64(path: string): Promise<ReadFileBase64Result
     }
     const { invoke } = await import("@tauri-apps/api/core");
     return await invoke<ReadFileBase64Result>("read_file_base64", { path });
+}
+
+export async function manimStatus(): Promise<ManimStatusResult> {
+    if (!isTauriRuntime()) {
+        return {
+            ok: false,
+            installed: false,
+            stdout: "",
+            stderr: "Not running inside Tauri.",
+            work_dir: "",
+        };
+    }
+    const { invoke } = await import("@tauri-apps/api/core");
+    return await invoke<ManimStatusResult>("manim_status");
 }

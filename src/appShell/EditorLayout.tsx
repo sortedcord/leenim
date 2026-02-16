@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SplitPane from "../components/SplitPane";
 import CodePanel from "../components/CodePanel";
 import PreviewPanel from "../components/PreviewPanel";
 import Timeline from "../components/Timeline";
-import { installManim, renderManim } from "../tauri/manim";
+import { installManim, manimStatus, renderManim } from "../tauri/manim";
 import LogsPage, { type LogEntry } from "./LogsPage";
 import { toAssetUrl } from "../tauri/path";
 import { readFileBase64 } from "../tauri/manim";
@@ -29,7 +29,27 @@ export default function EditorLayout() {
     const [workDir, setWorkDir] = useState<string>("");
     const [scriptPath, setScriptPath] = useState<string>("");
     const [isInstalling, setIsInstalling] = useState(false);
+    const [isManimInstalled, setIsManimInstalled] = useState(false);
+    const [isCheckingManim, setIsCheckingManim] = useState(true);
     const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
+
+    // One-time status check (best-effort). Avoids showing Install when already installed.
+    useEffect(() => {
+        let cancelled = false;
+        (async () => {
+            try {
+                const s = await manimStatus();
+                if (!cancelled && s.ok) setIsManimInstalled(Boolean(s.installed));
+            } catch {
+                // ignore
+            } finally {
+                if (!cancelled) setIsCheckingManim(false);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     const pushLog = (entry: Omit<LogEntry, "id">) => {
         setLogEntries((prev) => [
@@ -55,6 +75,7 @@ export default function EditorLayout() {
                         status={renderStatus}
                         outputUrl={outputUrl}
                         isInstalling={isInstalling}
+                        showInstallButton={!isCheckingManim && !isManimInstalled}
                         onVideoError={(info) => {
                             pushLog({
                                 ts: Date.now(),
@@ -74,6 +95,7 @@ export default function EditorLayout() {
                                 setStdout(res.stdout || "");
                                 setStderr(res.stderr || "");
                                 setRenderStatus(res.ok ? "Installed" : "Install failed");
+                                if (res.ok) setIsManimInstalled(true);
 
                                 pushLog({
                                     ts: Date.now(),
