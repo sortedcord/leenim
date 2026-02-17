@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import SplitPane from "../components/SplitPane";
 import CodePanel from "../components/CodePanel";
 import PreviewPanel from "../components/PreviewPanel";
@@ -32,6 +32,32 @@ export default function EditorLayout() {
     const [isManimInstalled, setIsManimInstalled] = useState(false);
     const [isCheckingManim, setIsCheckingManim] = useState(true);
     const [logEntries, setLogEntries] = useState<LogEntry[]>([]);
+
+    const videoRef = useRef<HTMLVideoElement | null>(null);
+    const [playheadSec, setPlayheadSec] = useState(0);
+    const [videoDurationSec, setVideoDurationSec] = useState<number | null>(null);
+
+    const [openMenu, setOpenMenu] = useState<null | "file" | "edit" | "view">(null);
+    const menuRootRef = useRef<HTMLDivElement | null>(null);
+
+    // Close menus only when clicking outside the menu bar + dropdown.
+    useEffect(() => {
+        if (!openMenu) return;
+
+        const onPointerDown = (ev: PointerEvent) => {
+            const root = menuRootRef.current;
+            if (!root) return;
+            const target = ev.target as Node | null;
+            if (target && root.contains(target)) return;
+            setOpenMenu(null);
+        };
+
+        const opts: AddEventListenerOptions = { capture: true };
+        document.addEventListener("pointerdown", onPointerDown, opts);
+        return () => {
+            document.removeEventListener("pointerdown", onPointerDown, opts);
+        };
+    }, [openMenu]);
 
     // One-time status check (best-effort). Avoids showing Install when already installed.
     useEffect(() => {
@@ -74,6 +100,11 @@ export default function EditorLayout() {
                     <PreviewPanel
                         status={renderStatus}
                         outputUrl={outputUrl}
+                        videoRef={videoRef}
+                        onVideoTimeUpdate={(t, d) => {
+                            setPlayheadSec(t);
+                            if (d && Number.isFinite(d)) setVideoDurationSec(d);
+                        }}
                         isInstalling={isInstalling}
                         showInstallButton={!isCheckingManim && !isManimInstalled}
                         onVideoError={(info) => {
@@ -198,8 +229,90 @@ export default function EditorLayout() {
     return (
         <div className="appRoot">
             <div className="appTopBar">
-                <div className="appBrand">leenim</div>
-                <div className="appHint">A friendlier Manim editor (work in progress)</div>
+                <div className="appMenuBar" ref={menuRootRef}>
+                    <button
+                        className={`appMenuItem ${openMenu === "file" ? "isOpen" : ""}`}
+                        onClick={() => setOpenMenu((m) => (m === "file" ? null : "file"))}
+                        type="button"
+                    >
+                        File
+                    </button>
+                    <button
+                        className={`appMenuItem ${openMenu === "edit" ? "isOpen" : ""}`}
+                        onClick={() => setOpenMenu((m) => (m === "edit" ? null : "edit"))}
+                        type="button"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        className={`appMenuItem ${openMenu === "view" ? "isOpen" : ""}`}
+                        onClick={() => setOpenMenu((m) => (m === "view" ? null : "view"))}
+                        type="button"
+                    >
+                        View
+                    </button>
+
+                    {openMenu ? (
+                        <div className="appMenuDropdown">
+                            {openMenu === "file" ? (
+                                <>
+                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                        New Project (todo)
+                                    </button>
+                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                        Open… (todo)
+                                    </button>
+                                    <div className="appMenuDropdownSep" />
+                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                        Quit (todo)
+                                    </button>
+                                </>
+                            ) : null}
+
+                            {openMenu === "edit" ? (
+                                <>
+                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                        Undo (todo)
+                                    </button>
+                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                        Redo (todo)
+                                    </button>
+                                    <div className="appMenuDropdownSep" />
+                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                        Find… (todo)
+                                    </button>
+                                </>
+                            ) : null}
+
+                            {openMenu === "view" ? (
+                                <>
+                                    <button
+                                        className="appMenuDropdownItem"
+                                        type="button"
+                                        onClick={() => {
+                                            setPage("editor");
+                                            setOpenMenu(null);
+                                        }}
+                                    >
+                                        Editor
+                                    </button>
+                                    <button
+                                        className="appMenuDropdownItem"
+                                        type="button"
+                                        onClick={() => {
+                                            setPage("logs");
+                                            setOpenMenu(null);
+                                        }}
+                                    >
+                                        Logs
+                                    </button>
+                                </>
+                            ) : null}
+                        </div>
+                    ) : null}
+                </div>
+
+                <div className="appBrandCentered">Leenim</div>
                 <div className="appTopActions">
                     <button className="btn" onClick={() => setPage("logs")}>Logs</button>
                     <button className="btn" onClick={() => setPage("editor")}>Editor</button>
@@ -221,7 +334,18 @@ export default function EditorLayout() {
                         minFirstPx={280}
                         minSecondPx={180}
                         first={top}
-                        second={<Timeline fps={60} durationSeconds={10} />}
+                        second={
+                            <Timeline
+                                fps={60}
+                                durationSeconds={videoDurationSec ?? 10}
+                                currentTimeSec={playheadSec}
+                                onScrub={(t) => {
+                                    setPlayheadSec(t);
+                                    const v = videoRef.current;
+                                    if (v) v.currentTime = t;
+                                }}
+                            />
+                        }
                     />
                 )}
             </div>

@@ -1,4 +1,4 @@
-// import React from "react"; // This line is commented out to remove unnecessary import
+import type React from "react";
 
 export type PreviewPanelProps = {
     status?: string;
@@ -8,6 +8,8 @@ export type PreviewPanelProps = {
     outputUrl?: string | null;
     onVideoError?: (info: { src: string; code?: number; message?: string }) => void;
     showInstallButton?: boolean;
+    onVideoTimeUpdate?: (timeSec: number, durationSec: number) => void;
+    videoRef?: React.RefObject<HTMLVideoElement | null>;
 };
 
 export default function PreviewPanel({
@@ -18,6 +20,8 @@ export default function PreviewPanel({
     outputUrl,
     onVideoError,
     showInstallButton = true,
+    onVideoTimeUpdate,
+    videoRef,
 }: PreviewPanelProps) {
     return (
         <div className="previewRoot">
@@ -38,8 +42,17 @@ export default function PreviewPanel({
                 {outputUrl ? (
                     <video
                         className="previewVideo"
+                        ref={videoRef as any}
                         src={outputUrl}
                         controls
+                        onLoadedMetadata={(e) => {
+                            const el = e.currentTarget;
+                            onVideoTimeUpdate?.(el.currentTime || 0, Number.isFinite(el.duration) ? el.duration : 0);
+                        }}
+                        onTimeUpdate={(e) => {
+                            const el = e.currentTarget;
+                            onVideoTimeUpdate?.(el.currentTime || 0, Number.isFinite(el.duration) ? el.duration : 0);
+                        }}
                         onError={(e) => {
                             const el = e.currentTarget;
                             const err = el.error;
