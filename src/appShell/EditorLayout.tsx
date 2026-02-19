@@ -40,6 +40,25 @@ export default function EditorLayout() {
     const [openMenu, setOpenMenu] = useState<null | "file" | "edit" | "view">(null);
     const menuRootRef = useRef<HTMLDivElement | null>(null);
 
+    const handleQuit = async () => {
+        setOpenMenu(null);
+        try {
+            // Best-effort: only works in Tauri.
+            // Use a Rust-side command to terminate the process.
+            const { invoke } = await import("@tauri-apps/api/core");
+            await invoke("quit_app");
+            return;
+        } catch {
+            // Not running in Tauri (or API unavailable). Try to close the tab/window.
+        }
+
+        try {
+            window.close();
+        } catch {
+            // ignore
+        }
+    };
+
     // Close menus only when clicking outside the menu bar + dropdown.
     useEffect(() => {
         if (!openMenu) return;
@@ -263,8 +282,8 @@ export default function EditorLayout() {
                                         Open… (todo)
                                     </button>
                                     <div className="appMenuDropdownSep" />
-                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
-                                        Quit (todo)
+                                    <button className="appMenuDropdownItem" type="button" onClick={handleQuit}>
+                                        Quit&nbsp;{navigator.platform.toLowerCase().includes("mac") ? "Cmd+Q" : "Ctrl+Q"}
                                     </button>
                                 </>
                             ) : null}

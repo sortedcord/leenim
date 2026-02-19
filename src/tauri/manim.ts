@@ -30,8 +30,6 @@ export type ManimStatusResult = {
 };
 
 function isTauriRuntime() {
-    // More robust than __TAURI__: different versions / dev setups may not expose it.
-    // In Tauri v2, the IPC bridge is typically present as a `__TAURI_INTERNALS__` global.
     const w = typeof window !== "undefined" ? (window as any) : undefined;
     return Boolean(w && (w.__TAURI_INTERNALS__ || w.__TAURI__));
 }
@@ -46,8 +44,6 @@ export async function renderManim(code: string): Promise<RenderResult> {
         };
     }
 
-    // Dynamic import avoids bundler/runtime edge-cases where static imports can be evaluated
-    // even in non-Tauri contexts or swapped during dev reload.
     const { invoke } = await import("@tauri-apps/api/core");
     return await invoke<RenderResult>("render_manim", { code });
 }

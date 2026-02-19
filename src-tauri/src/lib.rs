@@ -1,4 +1,3 @@
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 use base64::Engine;
 use serde::Serialize;
 use tauri::Manager;
@@ -328,6 +327,13 @@ fn read_file_base64(app: tauri::AppHandle, path: String) -> Result<ReadFileBase6
     })
 }
 
+#[tauri::command]
+fn quit_app(app: tauri::AppHandle) {
+    // Exits the whole Tauri application (all windows).
+    // Using `exit(0)` ensures the process terminates instead of just hiding a webview.
+    app.exit(0);
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -337,7 +343,8 @@ pub fn run() {
             manim_status,
             install_manim,
             render_manim,
-            read_file_base64
+            read_file_base64,
+            quit_app
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
