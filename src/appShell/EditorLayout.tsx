@@ -246,25 +246,34 @@ export default function EditorLayout() {
     );
 
     return (
-        <div className="appRoot">
-            <div className="appTopBar">
-                <div className="appMenuBar" ref={menuRootRef}>
+        <div className="h-screen w-screen flex flex-col bg-app-bg text-[color:var(--tw-color-app-text)] text-white">
+            <div className="h-10 shrink-0 flex items-center gap-2 px-2 border-b border-white/10 bg-app-panel relative">
+                <div className="relative flex items-center gap-1" ref={menuRootRef}>
                     <button
-                        className={`appMenuItem ${openMenu === "file" ? "isOpen" : ""}`}
+                        className={
+                            `px-2 py-1 rounded text-sm text-white/90 hover:bg-white/10 ` +
+                            (openMenu === "file" ? "bg-white/12" : "")
+                        }
                         onClick={() => setOpenMenu((m) => (m === "file" ? null : "file"))}
                         type="button"
                     >
                         File
                     </button>
                     <button
-                        className={`appMenuItem ${openMenu === "edit" ? "isOpen" : ""}`}
+                        className={
+                            `px-2 py-1 rounded text-sm text-white/90 hover:bg-white/10 ` +
+                            (openMenu === "edit" ? "bg-white/12" : "")
+                        }
                         onClick={() => setOpenMenu((m) => (m === "edit" ? null : "edit"))}
                         type="button"
                     >
                         Edit
                     </button>
                     <button
-                        className={`appMenuItem ${openMenu === "view" ? "isOpen" : ""}`}
+                        className={
+                            `px-2 py-1 rounded text-sm text-white/90 hover:bg-white/10 ` +
+                            (openMenu === "view" ? "bg-white/12" : "")
+                        }
                         onClick={() => setOpenMenu((m) => (m === "view" ? null : "view"))}
                         type="button"
                     >
@@ -272,32 +281,59 @@ export default function EditorLayout() {
                     </button>
 
                     {openMenu ? (
-                        <div className="appMenuDropdown">
+                        <div className="absolute top-full left-0 mt-1 w-56 rounded-lg border border-white/12 bg-app-panel shadow-lg overflow-hidden z-50">
                             {openMenu === "file" ? (
                                 <>
-                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                    <button
+                                        className="w-full text-left px-3 py-2 text-sm text-white/90 hover:bg-white/10"
+                                        type="button"
+                                        onClick={() => setOpenMenu(null)}
+                                    >
                                         New Project (todo)
                                     </button>
-                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                    <button
+                                        className="w-full text-left px-3 py-2 text-sm text-white/90 hover:bg-white/10"
+                                        type="button"
+                                        onClick={() => setOpenMenu(null)}
+                                    >
                                         Open… (todo)
                                     </button>
-                                    <div className="appMenuDropdownSep" />
-                                    <button className="appMenuDropdownItem" type="button" onClick={handleQuit}>
-                                        Quit&nbsp;{navigator.platform.toLowerCase().includes("mac") ? "Cmd+Q" : "Ctrl+Q"}
+                                    <div className="h-px bg-white/10 my-1" />
+                                    <button
+                                        className="w-full text-left px-3 py-2 text-sm text-white/90 hover:bg-white/10 flex items-center justify-between"
+                                        type="button"
+                                        onClick={handleQuit}
+                                    >
+                                        <span>Quit</span>
+                                        <span className="text-xs text-white/55">
+                                            {navigator.platform.toLowerCase().includes("mac") ? "Cmd+Q" : "Ctrl+Q"}
+                                        </span>
                                     </button>
                                 </>
                             ) : null}
 
                             {openMenu === "edit" ? (
                                 <>
-                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                    <button
+                                        className="w-full text-left px-3 py-2 text-sm text-white/90 hover:bg-white/10"
+                                        type="button"
+                                        onClick={() => setOpenMenu(null)}
+                                    >
                                         Undo (todo)
                                     </button>
-                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                    <button
+                                        className="w-full text-left px-3 py-2 text-sm text-white/90 hover:bg-white/10"
+                                        type="button"
+                                        onClick={() => setOpenMenu(null)}
+                                    >
                                         Redo (todo)
                                     </button>
-                                    <div className="appMenuDropdownSep" />
-                                    <button className="appMenuDropdownItem" type="button" onClick={() => setOpenMenu(null)}>
+                                    <div className="h-px bg-white/10 my-1" />
+                                    <button
+                                        className="w-full text-left px-3 py-2 text-sm text-white/90 hover:bg-white/10"
+                                        type="button"
+                                        onClick={() => setOpenMenu(null)}
+                                    >
                                         Find… (todo)
                                     </button>
                                 </>
@@ -306,7 +342,7 @@ export default function EditorLayout() {
                             {openMenu === "view" ? (
                                 <>
                                     <button
-                                        className="appMenuDropdownItem"
+                                        className="w-full text-left px-3 py-2 text-sm text-white/90 hover:bg-white/10"
                                         type="button"
                                         onClick={() => {
                                             setPage("editor");
@@ -316,7 +352,7 @@ export default function EditorLayout() {
                                         Editor
                                     </button>
                                     <button
-                                        className="appMenuDropdownItem"
+                                        className="w-full text-left px-3 py-2 text-sm text-white/90 hover:bg-white/10"
                                         type="button"
                                         onClick={() => {
                                             setPage("logs");
@@ -331,14 +367,34 @@ export default function EditorLayout() {
                     ) : null}
                 </div>
 
-                <div className="appBrandCentered">Leenim</div>
-                <div className="appTopActions">
-                    <button className="btn" onClick={() => setPage("logs")}>Logs</button>
-                    <button className="btn" onClick={() => setPage("editor")}>Editor</button>
+                <div className="absolute left-1/2 -translate-x-1/2 font-semibold text-sm tracking-wide text-white/85 select-none">
+                    Leenim
+                </div>
+                <div className="ml-auto flex items-center gap-2">
+                    <button
+                        className={
+                            "h-7 px-3 rounded-md text-sm border border-white/10 bg-white/5 hover:bg-white/10 " +
+                            (page === "logs" ? "text-white" : "text-white/80")
+                        }
+                        onClick={() => setPage("logs")}
+                        type="button"
+                    >
+                        Logs
+                    </button>
+                    <button
+                        className={
+                            "h-7 px-3 rounded-md text-sm border border-white/10 bg-white/5 hover:bg-white/10 " +
+                            (page === "editor" ? "text-white" : "text-white/80")
+                        }
+                        onClick={() => setPage("editor")}
+                        type="button"
+                    >
+                        Editor
+                    </button>
                 </div>
             </div>
 
-            <div className="appMain">
+            <div className="flex-1 min-h-0">
                 {page === "logs" ? (
                     <LogsPage
                         entries={logEntries}
